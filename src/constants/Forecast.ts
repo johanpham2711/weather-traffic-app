@@ -14,7 +14,7 @@ export const Forecast: Record<EForecast, string> = {
     [EForecast.CLOUDY]: "☁️",
     [EForecast.PARTLY_CLOUDY]: "⛅",
     [EForecast.PARTLY_CLOUDY_DAY]: "⛅",
-    [EForecast.PARTLY_CLOUDY_NIGHT]: "⛅",
+    [EForecast.PARTLY_CLOUDY_NIGHT]: "🌫️",
     [EForecast.FAIR_DAY]: "🌤️",
     [EForecast.FAIR_NIGHT]: "🌙",
     [EForecast.NO_DATA]: "No Data",

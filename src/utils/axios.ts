@@ -2,6 +2,7 @@ import axios from "axios";
 import { Config } from "../constants";
 import {
     ITrafficImagesResponse,
+    ITrafficImagesWithName,
     IWeatherForecastsResponse,
 } from "../interfaces";
 
@@ -37,23 +38,45 @@ export const fetchWeatherForecast = async (
     }
 };
 
-export const fetchAddressFromLocation = async (
-    lat: number,
-    lon: number
-): Promise<string> => {
+export const fetchWeatherTrafficLocation = async (
+    dateTime: string
+): Promise<ITrafficImagesWithName[]> => {
     try {
         const response = await axios.get(
-            `${Config.GoogleMapsApiUrl}/geocode/json`,
+            `${Config.ServerApiUrl}/weather-traffic`,
             {
                 params: {
-                    latlng: `${lat},${lon}`,
-                    key: Config.GoogleMapsApiKey,
+                    dateTime,
                 },
             }
         );
-        return response.data.results[0].formatted_address;
+        return response.data.data as ITrafficImagesWithName[];
     } catch (error) {
-        console.error("Error fetching address from location:", error);
+        console.error("Error fetching weather traffic location:", error);
+        throw error;
+    }
+};
+
+export const createReport = async (
+    dateTime: string,
+    location: ITrafficImagesWithName
+): Promise<ITrafficImagesWithName> => {
+    try {
+        const response = await axios.post(
+            `${Config.ServerApiUrl}/report`,
+            {
+                time: dateTime,
+                location,
+            },
+            {
+                headers: {
+                    "Content-Type": "application/json",
+                },
+            }
+        );
+        return response.data.data as ITrafficImagesWithName;
+    } catch (error) {
+        console.error("Error create report:", error);
         throw error;
     }
 };

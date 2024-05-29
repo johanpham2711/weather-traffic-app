@@ -109,6 +109,7 @@ body {
 
 .weather-forecast {
     grid-area: weather-forecast;
+    font-size: 100px;
 }
 
 .grid-container {

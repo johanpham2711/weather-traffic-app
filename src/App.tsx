@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useMemo, useState } from "react";
 import "./App.css";
 import CustomDatePicker from "./components/CustomDatePicker";
 import CustomTimePicker from "./components/CustomTimePicker";
@@ -8,19 +8,21 @@ import { combineDateTime } from "./utils";
 const App: React.FC = () => {
     const [selectedDate, setSelectedDate] = useState<Date | null>(null);
     const [selectedTime, setSelectedTime] = useState<Date | null>(null);
-    const [dateTime, setDateTime] = useState<string>("");
+    const [dateTime, setDateTime] = useState<string | null>(null);
 
     useEffect(() => {
+        let combinedDateTime = "";
         if (selectedDate && selectedTime) {
-            const combinedDateTime = combineDateTime(
-                selectedDate,
-                selectedTime
-            );
-            setDateTime(combinedDateTime);
+            combinedDateTime = combineDateTime(selectedDate, selectedTime);
         } else if (selectedDate) {
-            setDateTime(combineDateTime(selectedDate, new Date()));
+            combinedDateTime = combineDateTime(selectedDate, new Date());
         }
+        setDateTime(combinedDateTime);
     }, [selectedDate, selectedTime]);
+
+    const renderTrafficCamList = useMemo(() => {
+        return dateTime ? <TrafficCamList dateTime={dateTime} /> : <></>;
+    }, [dateTime]);
 
     return (
         <div className="App">
@@ -36,7 +38,7 @@ const App: React.FC = () => {
                         onTimeChange={setSelectedTime}
                     />
                 </div>
-                {dateTime && <TrafficCamList dateTime={dateTime} />}
+                {renderTrafficCamList}
             </div>
         </div>
     );

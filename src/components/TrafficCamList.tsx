@@ -1,12 +1,7 @@
 import React, { useEffect, useState } from "react";
-import { ITrafficImagesWithName } from "../interfaces";
-import {
-    fetchTrafficImages,
-    fetchWeatherForecast,
-    matchForecastWeather,
-    matchNearestArea,
-} from "../utils";
 import { EForecast, Forecast } from "../constants";
+import { ITrafficImagesWithName } from "../interfaces";
+import { createReport, fetchWeatherTrafficLocation } from "../utils";
 
 interface TrafficCamListProps {
     dateTime: string;
@@ -21,66 +16,22 @@ const TrafficCamList: React.FC<TrafficCamListProps> = ({ dateTime }) => {
 
     useEffect(() => {
         const fetchImages = async () => {
-            const [trafficImagesData, weatherForecastData] = await Promise.all([
-                fetchTrafficImages(dateTime),
-                fetchWeatherForecast(dateTime),
-            ]);
-
-            const cameras = trafficImagesData.items[0].cameras;
-            const areaMetadata = weatherForecastData.area_metadata;
-            const forecasts = weatherForecastData.items[0].forecasts;
-            const locationNameSet = new Set();
-
-            // Using Google Maps API to get location name
-
-            // const locationsPromise = cameras.map(async (camera) => {
-            //     const locationName = await fetchAddressFromLocation(
-            //         camera.location.latitude,
-            //         camera.location.longitude
-            //     );
-
-            //     return {
-            //         ...camera,
-            //         locationName,
-            //     };
-            // });
-            // const locationsWithName = await Promise.all(locationsPromise);
-
-            const locationsWithName = cameras.map((camera) => {
-                let locationName = matchNearestArea(
-                    areaMetadata,
-                    camera.location
-                );
-                const forecastWeather = matchForecastWeather(
-                    forecasts,
-                    locationName
-                );
-
-                if (locationNameSet.has(locationName)) {
-                    locationName = `${locationName} (Cam #${camera.camera_id})`;
-                }
-                locationNameSet.add(locationName);
-
-                return {
-                    ...camera,
-                    locationName,
-                    forecastWeather,
-                };
-            });
-
+            setSelectedImage(null);
+            setSelectedForecast(null);
+            const locationsWithName = await fetchWeatherTrafficLocation(
+                dateTime
+            );
             setLocations(locationsWithName);
         };
 
-        if (dateTime) {
-            fetchImages();
-        }
+        fetchImages();
     }, [dateTime]);
 
     const handleLocationClick = (location: ITrafficImagesWithName) => {
         setSelectedImage(location.image);
         setSelectedForecast(location.forecastWeather);
+        createReport(dateTime, location);
     };
-
     return (
         <div className="traffic-cam-list">
             <div className="location-list">
