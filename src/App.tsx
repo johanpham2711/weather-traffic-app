@@ -26,8 +26,7 @@ const App: React.FC = () => {
 
     return (
         <div className="App">
-            <h1>Weather and Traffic Cam App</h1>
-            <div className="grid-container">
+            <div className="flex-container">
                 <div className="picker-container">
                     <CustomDatePicker
                         selectedDate={selectedDate}
@@ -38,8 +37,9 @@ const App: React.FC = () => {
                         onTimeChange={setSelectedTime}
                     />
                 </div>
-                {renderTrafficCamList}
+                <div></div>
             </div>
+            {renderTrafficCamList}
         </div>
     );
 };

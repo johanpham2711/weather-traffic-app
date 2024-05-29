@@ -33,28 +33,35 @@ const TrafficCamList: React.FC<TrafficCamListProps> = ({ dateTime }) => {
         createReport(dateTime, location);
     };
     return (
-        <div className="traffic-cam-list">
-            <div className="location-list">
-                {locations.map((location) => (
-                    <button
-                        key={location.camera_id}
-                        className="location-item"
-                        onClick={() => handleLocationClick(location)}
-                    >
-                        {location.locationName}
-                    </button>
-                ))}
+        <div>
+            <div className="flex-container">
+                <div className="location-list">
+                    {locations.map((location) => (
+                        <button
+                            className="location-item"
+                            key={location.camera_id}
+                            onClick={() => handleLocationClick(location)}
+                        >
+                            {location.locationName}
+                        </button>
+                    ))}
+                </div>
+                {selectedForecast && (
+                    <div className="weather-forecast">
+                        {Forecast[selectedForecast]}
+                    </div>
+                )}
             </div>
-            {selectedForecast && (
-                <div className="weather-forecast">
-                    {Forecast[selectedForecast]}
-                </div>
-            )}
-            {selectedImage && (
-                <div className="traffic-cam-image">
-                    <img src={selectedImage} alt="Traffic" />
-                </div>
-            )}
+            <div className="flex-container">
+                {selectedImage ? (
+                    <div className="traffic-cam-image">
+                        <img className="traffic-cam-image" src={selectedImage} alt="Traffic" />
+                    </div>
+                ) : (
+                    <div></div>
+                )}
+                <div></div>
+            </div>
         </div>
     );
 };
